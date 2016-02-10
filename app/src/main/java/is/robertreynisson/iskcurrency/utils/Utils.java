@@ -1,14 +1,21 @@
 package is.robertreynisson.iskcurrency.utils;
 
+import android.text.Editable;
 import android.util.Log;
 
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.LocalDateTime;
 
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import is.robertreynisson.iskcurrency.ISKCurrency;
+import is.robertreynisson.iskcurrency.R;
+import is.robertreynisson.iskcurrency.presenter_layer.models.Currency;
 
 /**
  * Created by robert on 10.2.2016.
@@ -43,9 +50,13 @@ public class Utils {
         return timestamp;
     }
 
-    public static String CurrencyFormat(double value) {
+
+    public static String CurrencyFormat(double value, String currencyAbbrevaton) {
+        return CurrencyFormat(value, getLocaleFromCurrency(currencyAbbrevaton));
+    }
+
+    public static String CurrencyFormat(double value, Locale l) {
         char thousand = 'k';
-        Locale l = Locale.getDefault();
 
         //Saudi does not want their numbers formatted to Indian numbers
         if(l.getLanguage().equals("ar")) l = new Locale("DE", l.getCountry());
@@ -82,4 +93,66 @@ public class Utils {
         return null;
     }
 
+    public static Locale getLocaleFromCurrency(String currencyAbbrevaton) {
+        Locale locale = Locale.getDefault();
+        switch (currencyAbbrevaton){
+            case "ISK":
+                locale = new Locale("is", "IS");
+                break;
+            case "USD":
+                locale = new Locale("en", "US");
+                break;
+            case "EUR":
+                locale = new Locale("de", "DE");
+                break;
+            case "GBP":
+                locale = new Locale("en", "GB");
+                break;
+            case "JPY":
+                locale = new Locale("ja", "JP");
+                break;
+            case "NOK":
+                locale = new Locale("nb", "NO");
+                break;
+            case "SEK":
+                locale = new Locale("sv", "SE");
+                break;
+            case "DKK":
+                locale = new Locale("da", "DK");
+                break;
+            case "CAD":
+                locale = new Locale("en", "CA");
+                break;
+            case "AUD":
+                locale = new Locale("en", "AU");
+                break;
+            case "ZAR":
+                locale = new Locale("en", "ZA");
+                break;
+            case "HKD":
+                locale = new Locale("en", "HK");
+                break;
+            case "NZD":
+                locale = new Locale("en", "NZ");
+                break;
+            case "PLN":
+                locale = new Locale("pl", "PL");
+                break;
+        }
+        return locale;
+    }
+
+    public static double doubleFromFormattedCurrency(String currency, String amount) throws NumberFormatException{
+        Locale l = Utils.getLocaleFromCurrency(currency);
+        java.util.Currency curr = java.util.Currency.getInstance(l);
+        curr.getSymbol(l);
+        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(l);
+        String thousand = decimalFormatSymbols.getDecimalSeparator() == '.' ? ",": ".";
+        String x = amount.toString().replace(curr.getSymbol(l), "");
+        x = x.replaceAll("\\s+","");
+        x = x.replace(thousand, "");
+        x = x.replace(",", ".");
+        if(x.equals("")) return 0;
+        return Double.parseDouble(x);
+    }
 }

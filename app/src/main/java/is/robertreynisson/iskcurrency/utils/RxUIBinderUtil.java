@@ -51,10 +51,7 @@ public class RxUIBinderUtil {
         }
 
         @Override
-        public void onCompleted() {
-            Log.v(TAG, tag + "." + "onCompleted");
-
-        }
+        public void onCompleted() { Log.v(TAG, tag + "." + "onCompleted"); }
 
         @Override
         public void onError(Throwable e) {
@@ -62,10 +59,6 @@ public class RxUIBinderUtil {
         }
 
         @Override
-        public void onNext(U u) {
-
-            setter.call(u);
-
-        }
+        public void onNext(U u) {  setter.call(u); }
     }
 }

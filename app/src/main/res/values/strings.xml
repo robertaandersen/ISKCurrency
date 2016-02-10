@@ -3,4 +3,5 @@
     <string name="action_settings">Settings</string>
     <string name="icelandic_krona">Íslensk króna</string>
     <string name="isk">ISK</string>
+    <string name="input_validation_error_digits">Use only digits</string>
 </resources>
