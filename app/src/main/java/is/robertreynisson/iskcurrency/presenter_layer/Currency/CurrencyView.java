@@ -53,7 +53,6 @@ public class CurrencyView extends FrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         ButterKnife.bind(this);
-        this.requestFocus();
     }
 
 
