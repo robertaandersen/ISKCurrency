@@ -1,7 +1,7 @@
 package is.robertreynisson.iskcurrency.presenter_layer.models;
 
-import java.util.Locale;
-
+import is.robertreynisson.iskcurrency.ISKCurrency;
+import is.robertreynisson.iskcurrency.R;
 import is.robertreynisson.iskcurrency.utils.Utils;
 
 /**
@@ -16,8 +16,6 @@ public class Currency {
     public String getExchange() {
         return Utils.CurrencyFormat((baseCurrencyAmount / currencyValue), currencyAbbrevaton);
     }
-    public String currencyDisplayValue() { return Utils.CurrencyFormat(currencyValue, new Locale("is", "IS"));}
-
-
+    public String currencyDisplayValue() { return Utils.FormatNumber(currencyValue, false) +" "+ ISKCurrency.getInstance().getResources().getString(R.string.isk);}
 
 }

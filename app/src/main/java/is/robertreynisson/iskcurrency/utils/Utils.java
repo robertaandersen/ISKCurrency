@@ -1,6 +1,5 @@
 package is.robertreynisson.iskcurrency.utils;
 
-import android.text.Editable;
 import android.util.Log;
 
 import org.joda.time.DateTimeFieldType;
@@ -8,20 +7,17 @@ import org.joda.time.LocalDateTime;
 
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import is.robertreynisson.iskcurrency.ISKCurrency;
-import is.robertreynisson.iskcurrency.R;
-import is.robertreynisson.iskcurrency.presenter_layer.models.Currency;
 
 /**
  * Created by robert on 10.2.2016.
  */
 public class Utils {
-    public static void logger(String tag, String msg) { Log.d(tag, msg); }
+    public static void logger(String tag, String msg) {
+        Log.d(tag, msg);
+    }
 
     public static String PrettyDateFormatter(long date) {
         // Do additional formatting here (e.g. prettytime etc.)
@@ -32,18 +28,18 @@ public class Utils {
         Locale l = Locale.getDefault();
         return
                 localDateTime.dayOfWeek().getAsShortText(l)
-                        +" " + localDateTime.getDayOfMonth()
-                        +" " +localDateTime.toString("MMM")
-                        +" " + localDateTime.getYear()
-                        +" "+ getClock(localDateTime);
+                        + " " + localDateTime.getDayOfMonth()
+                        + " " + localDateTime.toString("MMM")
+                        + " " + localDateTime.getYear()
+                        + " " + getClock(localDateTime);
     }
 
     public static String getClock(LocalDateTime localDateTime) {
         int min = localDateTime.get(DateTimeFieldType.minuteOfHour());
-        String minutes = min < 10 ? "0"+min : min+"";
+        String minutes = min < 10 ? "0" + min : min + "";
         return localDateTime.get(DateTimeFieldType.hourOfDay())
-                +":"+ minutes
-                +":"+localDateTime.get(DateTimeFieldType.secondOfMinute());
+                + ":" + minutes
+                + ":" + localDateTime.get(DateTimeFieldType.secondOfMinute());
     }
 
     public static String PrettyDateFormatter(String timestamp) {
@@ -59,7 +55,7 @@ public class Utils {
         char thousand = 'k';
 
         //Saudi does not want their numbers formatted to Indian numbers
-        if(l.getLanguage().equals("ar")) l = new Locale("DE", l.getCountry());
+        if (l.getLanguage().equals("ar")) l = new Locale("DE", l.getCountry());
 
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(l);
         numberFormat.setMaximumFractionDigits(2);
@@ -95,7 +91,7 @@ public class Utils {
 
     public static Locale getLocaleFromCurrency(String currencyAbbrevaton) {
         Locale locale = Locale.getDefault();
-        switch (currencyAbbrevaton){
+        switch (currencyAbbrevaton) {
             case "ISK":
                 locale = new Locale("is", "IS");
                 break;
@@ -142,17 +138,28 @@ public class Utils {
         return locale;
     }
 
-    public static double doubleFromFormattedCurrency(String currency, String amount) throws NumberFormatException{
+    public static double doubleFromFormattedCurrency(String currency, String amount) throws NumberFormatException {
         Locale l = Utils.getLocaleFromCurrency(currency);
         java.util.Currency curr = java.util.Currency.getInstance(l);
         curr.getSymbol(l);
         DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(l);
-        String thousand = decimalFormatSymbols.getDecimalSeparator() == '.' ? ",": ".";
+        String thousand = decimalFormatSymbols.getDecimalSeparator() == '.' ? "," : ".";
         String x = amount.toString().replace(curr.getSymbol(l), "");
-        x = x.replaceAll("\\s+","");
+        x = x.replaceAll("\\s+", "");
         x = x.replace(thousand, "");
         x = x.replace(",", ".");
-        if(x.equals("")) return 0;
+        if (x.equals("")) return 0;
         return Double.parseDouble(x);
+    }
+
+    public static String FormatNumber(double value, boolean abbreviate) {
+
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
+        numberFormat.setMaximumFractionDigits(2);
+        if(!abbreviate) return numberFormat.format(value);
+        int magnitude = value > 999999 ? 1000000 : value > 999 ? 1000 : value < -999 ? value < -999999 ? 1000000 : 1000 : 0;
+        char postFix = magnitude == 1000000 ? 'M' : magnitude == 1000 ? 'k' : ' ';
+        return magnitude > 0 ? numberFormat.format(value / magnitude) : numberFormat.format(value);
+
     }
 }

@@ -14,13 +14,14 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
         android:weightSum="8">
 
         <TextView
             android:layout_weight="3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_gravity="center_vertical"
             android:text="@{currency.currencyName}"
             tools:text="Íslensk króna" />
@@ -31,7 +32,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_gravity="center_vertical"
-            android:layout_marginTop="5dp"
             android:text="@{currency.currencyAbbrevaton}"
             tools:text="ISK" />
 
@@ -40,17 +40,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginTop="5dp"
             android:text="@{currency.currencyDisplayValue}"
             tools:text="162kr" />
 
-        <EditText
+        <TextView
             android:id="@+id/currency_item_edit_text"
             android:layout_weight="2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:gravity="right"
             android:text="@{currency.getExchange}"
             tools:text="1000" />
     </LinearLayout>
