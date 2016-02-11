@@ -1,6 +1,5 @@
 package is.robertreynisson.iskcurrency.utils;
 
-import android.text.Editable;
 import android.util.Log;
 
 import org.joda.time.DateTimeFieldType;
@@ -8,14 +7,9 @@ import org.joda.time.LocalDateTime;
 
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import is.robertreynisson.iskcurrency.ISKCurrency;
-import is.robertreynisson.iskcurrency.R;
-import is.robertreynisson.iskcurrency.presenter_layer.models.Currency;
 
 /**
  * Created by robert on 10.2.2016.
@@ -50,12 +44,19 @@ public class Utils {
         return timestamp;
     }
 
-
-    public static String CurrencyFormat(double value, String currencyAbbrevaton) {
-        return CurrencyFormat(value, getLocaleFromCurrency(currencyAbbrevaton));
+    public static double roundToDouble(float value, int i) {
+        return i > 0 ? (double) Math.round(value * i) / i : (int) value;
     }
 
-    public static String CurrencyFormat(double value, Locale l) {
+    public static double roundToDouble(double value, int i) {
+        return i > 0 ? (double) Math.round(value * i) / i : (int) value;
+    }
+
+    public static String CurrencyFormat(double value, String currencyAbbrevaton, boolean abbreviate) {
+        return CurrencyFormat(value, getLocaleFromCurrency(currencyAbbrevaton) ,abbreviate);
+    }
+
+    public static String CurrencyFormat(double value, Locale l, boolean abbreviate) {
         char thousand = 'k';
 
         //Saudi does not want their numbers formatted to Indian numbers
@@ -63,6 +64,7 @@ public class Utils {
 
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(l);
         numberFormat.setMaximumFractionDigits(2);
+        if(!abbreviate) return numberFormat.format(value);
         int magnitude = value > 999999 ? 1000000 : value > 999 ? 1000 : value < -999 ? value < -999999 ? 1000000 : 1000 : 1;
         char postFix = magnitude == 1000000 ? 'M' : magnitude == 1000 ? thousand : ' ';
         String ret = numberFormat.format(value / magnitude);
@@ -134,6 +136,9 @@ public class Utils {
                 break;
             case "NZD":
                 locale = new Locale("en", "NZ");
+                break;
+            case "CHF":
+                locale = new Locale("de", "CH");
                 break;
             case "PLN":
                 locale = new Locale("pl", "PL");

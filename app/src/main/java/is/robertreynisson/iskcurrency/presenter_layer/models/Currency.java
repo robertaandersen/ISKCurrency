@@ -13,10 +13,15 @@ public class Currency {
     public double currencyValue;
     public double baseCurrencyAmount = 1000;
 
-    public String getExchange() {
-        return Utils.CurrencyFormat((baseCurrencyAmount / currencyValue), currencyAbbrevaton);
+    public String getExchangeString() {
+        return Utils.CurrencyFormat(baseCurrencyAmount / currencyValue, currencyAbbrevaton, false);
     }
-    public String currencyDisplayValue() { return Utils.CurrencyFormat(currencyValue, new Locale("is", "IS"));}
+
+    public double getExchange(){
+        return Utils.roundToDouble(baseCurrencyAmount / currencyValue, 2);
+    }
+
+    public String currencyDisplayValue() { return Utils.CurrencyFormat(currencyValue, new Locale("is", "IS"), false);}
 
 
 

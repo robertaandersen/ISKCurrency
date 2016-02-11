@@ -3,7 +3,6 @@ package is.robertreynisson.iskcurrency.presenter_layer.Currency;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.util.AttributeSet;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -39,6 +38,7 @@ public class CurrencyView extends FrameLayout {
 
     public static RxBus foreignCurrencyBus = new RxBus();
     public static RxBus baseCurrencyBus = new RxBus();
+    private Currency baseCurrency;
 
     @Bind(R.id.currency_view_recycler)
     public RecyclerView recyclerView;
@@ -53,7 +53,7 @@ public class CurrencyView extends FrameLayout {
         String xxx = baseValue.getText().toString();
         baseValue.setError(null);
         if (validate(xxx)) {
-            foreignCurrencyBus.send(Utils.doubleFromFormattedCurrency("ISK", xxx));
+            foreignCurrencyBus.send(xxx);
             currencyRecyclerAdpater.notifyDataSetChanged();
         } else {
             baseValue.setError(ISKCurrency.getInstance().getResources().getString(R.string.input_validation_error_digits));
@@ -68,11 +68,22 @@ public class CurrencyView extends FrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         ButterKnife.bind(this);
-        this.requestFocus();
-        baseCurrencyBus.toObserverable().throttleLast(2, TimeUnit.SECONDS, AndroidSchedulers.mainThread()).subscribe(o ->
+        baseCurrency = new Currency();
+        baseCurrency.baseCurrencyAmount = 1000;
+        baseCurrency.currencyAbbrevaton = "ISK";
+        baseCurrency.currencyValue = 1;
+        baseCurrencyBus.toObserverable().throttleLast(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread()).subscribe(o ->
         {
-            baseValue.setText(Utils.CurrencyFormat(Double.parseDouble(o.toString()), new Locale("is", "IS")));
+            baseValue.setText(Utils.CurrencyFormat(Double.parseDouble(o.toString()), new Locale("is", "IS"), false));
+            baseCurrency.baseCurrencyAmount = Double.parseDouble(o.toString());
             foreignCurrencyBus.send(Double.parseDouble(o.toString()));
+            currencyRecyclerAdpater.notifyDataSetChanged();
+        });
+        baseValue.setOnFocusChangeListener((v, hasFocus) -> {
+            baseValueFocus = hasFocus;
+            if (hasFocus) {
+                baseValue.setText(String.valueOf(baseCurrency.getExchange()));
+            }
         });
     }
 
@@ -96,7 +107,7 @@ public class CurrencyView extends FrameLayout {
         this.recyclerView.invalidate();
         this.recyclerView.setLayoutManager(layoutManager);
         this.recyclerView.setAdapter(this.currencyRecyclerAdpater);
-        baseValue.setOnFocusChangeListener((v, hasFocus) -> baseValueFocus = hasFocus);
+
     }
 
     public static boolean foreignCurrencyChanged(Currency currency, String text) {

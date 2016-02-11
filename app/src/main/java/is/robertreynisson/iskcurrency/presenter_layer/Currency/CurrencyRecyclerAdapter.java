@@ -15,6 +15,7 @@ import is.robertreynisson.iskcurrency.ISKCurrency;
 import is.robertreynisson.iskcurrency.R;
 import is.robertreynisson.iskcurrency.databinding.CurrencyItemBinding;
 import is.robertreynisson.iskcurrency.presenter_layer.models.Currency;
+import is.robertreynisson.iskcurrency.utils.Utils;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -37,7 +38,7 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        CurrencyView.foreignCurrencyBus.toObserverable().throttleLast(2, TimeUnit.SECONDS, AndroidSchedulers.mainThread()).subscribe(o -> currencies.get(position).baseCurrencyAmount = Double.parseDouble(o.toString()));
+        CurrencyView.foreignCurrencyBus.toObserverable().throttleLast(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread()).subscribe(o -> currencies.get(position).baseCurrencyAmount = Double.parseDouble(o.toString()));
 
         EditText e = (EditText) holder.getBinding().getRoot().findViewById(R.id.currency_item_edit_text);
         e.addTextChangedListener(holder.getCurrencyChanged(currencies.get(position)));
@@ -57,21 +58,31 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
         private final EditText currencyEditText;
         private boolean currecyHasFocus = false;
         // each data item is just a string in this case
-        public CurrencyItemBinding currency;
+        public CurrencyItemBinding currencyItemBinding;
+        private Currency currency;
 
-        public ViewHolder(CurrencyItemBinding currency) {
-            super(currency.getRoot());
-            this.currencyEditText = (EditText) currency.getRoot().findViewById(R.id.currency_item_edit_text);
-            this.currencyEditText.setOnFocusChangeListener((v, hasFocus) -> currecyHasFocus = hasFocus);
-            this.currency = currency;
+        public ViewHolder(CurrencyItemBinding currencyBinding) {
+            super(currencyBinding.getRoot());
+            this.currencyEditText = (EditText) currencyBinding.getRoot().findViewById(R.id.currency_item_edit_text);
+            this.currencyEditText.setOnFocusChangeListener((v, hasFocus) -> {
+                this.currecyHasFocus = hasFocus;
+                if(hasFocus){
+                    this.currencyEditText.setText("0");
+                }
+                else{
+                    this.currencyEditText.setText(currency.getExchangeString());
+                }
+            });
+            this.currencyItemBinding = currencyBinding;
         }
 
         public void bindConnection(Currency currency) {
-            this.currency.setCurrency(currency);
+            this.currency = currency;
+            this.currencyItemBinding.setCurrency(currency);
         }
 
         public CurrencyItemBinding getBinding() {
-            return this.currency;
+            return this.currencyItemBinding;
         }
 
         public TextWatcher getCurrencyChanged(Currency currency) {
@@ -84,6 +95,7 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if(!currecyHasFocus) return;
+                    Utils.logger(currency.currencyAbbrevaton, "changed");
                     currencyEditText.setError(null);
                     if(!CurrencyView.foreignCurrencyChanged(currency, currencyEditText.getText().toString())) currencyEditText.setError(ISKCurrency.getInstance().getResources().getString(R.string.input_validation_error_digits));
                 }
