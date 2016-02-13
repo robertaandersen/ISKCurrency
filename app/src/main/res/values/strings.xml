@@ -4,4 +4,5 @@
     <string name="icelandic_krona">Íslensk króna</string>
     <string name="isk">ISK</string>
     <string name="input_validation_error_digits">Use only digits</string>
+    <string name="update_msg">Last updated at</string>
 </resources>

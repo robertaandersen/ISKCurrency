@@ -1,19 +1,19 @@
 package is.robertreynisson.iskcurrency.presenter_layer.Currency;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import is.robertreynisson.iskcurrency.R;
 import is.robertreynisson.iskcurrency.domain_layer.CurrencyViewModel;
+import is.robertreynisson.iskcurrency.presenter_layer.ISKCurrencyFragment;
 import is.robertreynisson.iskcurrency.utils.Utils;
 
 /**
  * Created by robert on 10.2.2016.
  */
-public class CurrencyFragment extends Fragment {
+public class CurrencyFragment extends ISKCurrencyFragment {
     //Main purpose of Fragments is to maintain reference
     //to the View and View Model and react to OS events
     private static final String TAG = CurrencyFragment.class.getSimpleName();
@@ -78,5 +78,16 @@ public class CurrencyFragment extends Fragment {
         super.onDestroy();
         viewModel.dispose();
         viewModel = null;
+    }
+
+    @Override
+    public void reloadFragment() {
+        if(viewModel != null) {
+            viewModel.dispose();
+            viewModel = null;
+        }
+        viewModel = new CurrencyViewModel();
+        viewModel.subscribeToDataStore();
+        view.setViewModel(viewModel);
     }
 }

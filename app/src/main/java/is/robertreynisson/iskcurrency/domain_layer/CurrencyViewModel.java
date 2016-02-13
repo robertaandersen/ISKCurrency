@@ -1,5 +1,6 @@
 package is.robertreynisson.iskcurrency.domain_layer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -7,6 +8,7 @@ import is.robertreynisson.iskcurrency.presenter_layer.MainActivity;
 import is.robertreynisson.iskcurrency.presenter_layer.models.Currency;
 import is.robertreynisson.iskcurrency.utils.RxBus;
 import is.robertreynisson.iskcurrency.utils.Utils;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
@@ -23,11 +25,11 @@ public class CurrencyViewModel extends AbstractViewModel {
     private final static BehaviorSubject<Object> newBaseAmount = BehaviorSubject.create();
     public static RxBus foreignCurrencyBus = new RxBus();
 
-
     @Override
     protected void subscribeToDataStoreInternal(CompositeSubscription compositeSubscription) {
         Utils.logger(TAG, "Subscribed");
         compositeSubscription.add(MainActivity.serviceAdapter.getRates("m5").map(ModelConverters::currencyModelFromAPI).subscribe(currencyList));
+        //compositeSubscription.add(getDummyCurrencies().subscribeOn(AndroidSchedulers.mainThread()).subscribe(currencyList));
         compositeSubscription.add(
                 foreignCurrencyBus.toObserverable()
                         .throttleLast(250, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
@@ -38,15 +40,35 @@ public class CurrencyViewModel extends AbstractViewModel {
     public BehaviorSubject<String> getTime() { return time; }
 
     public BehaviorSubject<List<Currency>> getCurrencies() { return currencyList;}
+    public Observable<List<Currency>> getDummyCurrencies() {
+        List<Currency> currlist = new ArrayList();
+        Currency usd = new Currency();
+        usd.currencyValue = 136.6;
+        usd.currencyAbbrevaton = "USD";
+        usd.currencyName ="Bandaríkjadalur";
+        currlist.add(usd);
+
+        Currency eur = new Currency();
+        eur.currencyValue = 142.2;
+        eur.currencyAbbrevaton = "EUR";
+        eur.currencyName ="Evra";
+        currlist.add(eur);
+
+        Currency dkk = new Currency();
+        dkk.currencyValue = 21.5;
+        dkk.currencyAbbrevaton = "DKK";
+        currlist.add(dkk);
+        return Observable.just(currlist);
+
+    }
     public static BehaviorSubject<Object> getNewBaseAmount() { return newBaseAmount;}
 
     private static String purge(String xxx){
         xxx = xxx.replace(" ", "");
-        xxx = xxx.replace(",", "");
-        xxx = xxx.replace(".", "");
+        xxx = xxx.replace(",", ".");
         String ret = "";
         for(int i = 0; i < xxx.length(); i++){
-            if(Character.isDigit(xxx.charAt(i))) ret += xxx.charAt(i);
+            if(Character.isDigit(xxx.charAt(i)) || xxx.charAt(i) == '.') ret += xxx.charAt(i);
         }
         return ret;
     }
@@ -54,7 +76,7 @@ public class CurrencyViewModel extends AbstractViewModel {
         //Todo implement 'nicer' validation
         if (xxx.equals("")) return true;
         for (int i = 0; i < xxx.length(); i++) {
-            if (!Character.isDigit(xxx.charAt(i))) return false;
+            if (!Character.isDigit(xxx.charAt(i)) && xxx.charAt(i) != '.') return false;
         }
         return true;
     }
@@ -67,4 +89,5 @@ public class CurrencyViewModel extends AbstractViewModel {
         }
         return false;
     }
+
 }

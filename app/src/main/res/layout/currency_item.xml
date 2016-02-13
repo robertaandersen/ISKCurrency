@@ -43,7 +43,7 @@
             android:text="@{currency.currencyDisplayValue}"
             tools:text="162kr" />
 
-        <TextView
+        <EditText
             android:id="@+id/currency_item_edit_text"
             android:layout_weight="2"
             android:layout_width="0dp"

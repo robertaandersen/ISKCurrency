@@ -14,7 +14,7 @@ public class Currency {
     public double baseCurrencyAmount = 1000;
 
     public String getExchange() {
-        return Utils.CurrencyFormat((baseCurrencyAmount / currencyValue), currencyAbbrevaton);
+        return Utils.CurrencyFormat((baseCurrencyAmount / currencyValue), currencyAbbrevaton, false);
     }
     public String currencyDisplayValue() { return Utils.FormatNumber(currencyValue, false) +" "+ ISKCurrency.getInstance().getResources().getString(R.string.isk);}
 

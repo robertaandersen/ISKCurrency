@@ -47,11 +47,11 @@ public class Utils {
     }
 
 
-    public static String CurrencyFormat(double value, String currencyAbbrevaton) {
-        return CurrencyFormat(value, getLocaleFromCurrency(currencyAbbrevaton));
+    public static String CurrencyFormat(double value, String currencyAbbrevaton, boolean scientificNotation) {
+        return CurrencyFormat(value, getLocaleFromCurrency(currencyAbbrevaton), scientificNotation);
     }
 
-    public static String CurrencyFormat(double value, Locale l) {
+    public static String CurrencyFormat(double value, Locale l, boolean scientificNotation) {
         char thousand = 'k';
 
         //Saudi does not want their numbers formatted to Indian numbers
@@ -59,6 +59,7 @@ public class Utils {
 
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(l);
         numberFormat.setMaximumFractionDigits(2);
+        if(!scientificNotation) return numberFormat.format(value);
         int magnitude = value > 999999 ? 1000000 : value > 999 ? 1000 : value < -999 ? value < -999999 ? 1000000 : 1000 : 1;
         char postFix = magnitude == 1000000 ? 'M' : magnitude == 1000 ? thousand : ' ';
         String ret = numberFormat.format(value / magnitude);
