@@ -85,7 +85,7 @@ public class CurrencyView extends FrameLayout {
             baseValue.setError(null);
             if (!baseValue.hasFocus()) {
                 try {
-                    baseValue.setText(Utils.CurrencyFormat(Double.parseDouble(o.toString()), "ISK", false));
+                    baseValue.setText(Utils.CurrencyFormat(Utils.roundToDouble(Float.parseFloat(o.toString()), 0), "ISK", false));
                 } catch (NumberFormatException ex) {
                     baseValue.setError(ex.getMessage());
                 }
@@ -98,6 +98,9 @@ public class CurrencyView extends FrameLayout {
     //viewModels observable objects via
     //the BinderUtil.
     public void setViewModel(CurrencyViewModel viewModel) {
+        if(!MainActivity.isOnline()){
+            MainActivity.setOffLine();
+        }
         rxUIBinderUtil.clear();
         compositeSubscription.clear();
         if (viewModel != null) {

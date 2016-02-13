@@ -5,4 +5,5 @@
     <string name="isk">ISK</string>
     <string name="input_validation_error_digits">Use only digits</string>
     <string name="update_msg">Last updated at</string>
+    <string name="error_no_network">No network connection</string>
 </resources>

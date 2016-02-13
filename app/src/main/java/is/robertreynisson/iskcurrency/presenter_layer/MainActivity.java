@@ -1,14 +1,20 @@
 package is.robertreynisson.iskcurrency.presenter_layer;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Date;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import is.robertreynisson.iskcurrency.ISKCurrency;
 import is.robertreynisson.iskcurrency.R;
@@ -23,7 +29,10 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity mainActivity;
 
     private static CurrencyFragment currencyFragment;
+
     static TextView time;
+    public static TextView noNetwork;
+    public static LinearLayout fragmentContainer;
 
 
     @Override
@@ -35,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         time = (TextView) toolbar.findViewById(R.id.toolbar_time);
+        noNetwork = (TextView) findViewById(R.id.no_network);
+        fragmentContainer = (LinearLayout) findViewById(R.id.container);
 //        setSupportActionBar(toolbar);
 //        if(getSupportActionBar() != null) getSupportActionBar().setTitle("ISK Currency converter");
         currencyFragment = new CurrencyFragment();
@@ -83,5 +94,18 @@ public class MainActivity extends AppCompatActivity {
         else {
             currencyFragment.reloadFragment();
         }
+    }
+
+    public static boolean isOnline() {
+        noNetwork.setVisibility(View.GONE);
+        fragmentContainer.setVisibility(View.VISIBLE);
+        ConnectivityManager cm = (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    public static void setOffLine() {
+        noNetwork.setVisibility(View.VISIBLE);
+        fragmentContainer.setVisibility(View.GONE);
     }
 }

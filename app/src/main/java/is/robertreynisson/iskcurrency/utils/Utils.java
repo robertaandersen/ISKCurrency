@@ -161,6 +161,7 @@ public class Utils {
         int magnitude = value > 999999 ? 1000000 : value > 999 ? 1000 : value < -999 ? value < -999999 ? 1000000 : 1000 : 0;
         char postFix = magnitude == 1000000 ? 'M' : magnitude == 1000 ? 'k' : ' ';
         return magnitude > 0 ? numberFormat.format(value / magnitude) : numberFormat.format(value);
-
     }
+
+    public static double roundToDouble(float value, int i) { return i > 0 ? (double) Math.round(value * i) / i : (int) value; }
 }

@@ -14,7 +14,6 @@ import is.robertreynisson.iskcurrency.R;
 import is.robertreynisson.iskcurrency.databinding.CurrencyItemBinding;
 import is.robertreynisson.iskcurrency.domain_layer.CurrencyViewModel;
 import is.robertreynisson.iskcurrency.presenter_layer.models.Currency;
-import is.robertreynisson.iskcurrency.utils.Utils;
 import rx.subscriptions.CompositeSubscription;
 
 /**
