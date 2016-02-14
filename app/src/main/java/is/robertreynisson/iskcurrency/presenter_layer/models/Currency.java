@@ -1,5 +1,7 @@
 package is.robertreynisson.iskcurrency.presenter_layer.models;
 
+import android.graphics.drawable.Drawable;
+
 import is.robertreynisson.iskcurrency.ISKCurrency;
 import is.robertreynisson.iskcurrency.R;
 import is.robertreynisson.iskcurrency.utils.Utils;
@@ -9,6 +11,7 @@ import is.robertreynisson.iskcurrency.utils.Utils;
  */
 public class Currency {
     public String currencyName;
+    public Drawable currencyIcon;
     public String currencyAbbrevaton;
     public double currencyValue;
     public double baseCurrencyAmount = 1000;

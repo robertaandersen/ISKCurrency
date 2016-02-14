@@ -14,7 +14,7 @@
         <include layout="@layout/toolbar_container"/>
 
         <TextView
-            android:id="@+id/no_network"
+            android:id="@+id/main_errorMSG"
             android:text="@string/error_no_network"
             android:visibility="gone"
             android:layout_width="match_parent"

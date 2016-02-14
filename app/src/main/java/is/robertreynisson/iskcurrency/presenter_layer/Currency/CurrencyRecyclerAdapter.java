@@ -75,9 +75,9 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
 
                         @Override
                         public void afterTextChanged(Editable s) {
-                            input.setError(null);
-                            if (!input.hasFocus() || input.getText().toString().equals("")) return;
+                            if (input == null || !input.hasFocus() || input.getText().toString().equals("")) return;
                             try {
+                                input.setError(null);
                                 double val = Double.parseDouble(input.getText().toString()) * currency.currencyValue;
                                 CurrencyViewModel.broadcastNewValue(String.valueOf(val));
 

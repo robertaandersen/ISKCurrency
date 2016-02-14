@@ -9,7 +9,7 @@ import java.util.List;
 import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
-public class CurrencyResponse {
+public class APISCurrencyResponse {
 
     @SerializedName("results")
     @Expose

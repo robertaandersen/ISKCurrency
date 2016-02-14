@@ -1,15 +1,24 @@
 package is.robertreynisson.iskcurrency.utils;
 
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import org.joda.time.DateTimeFieldType;
+import org.joda.time.Duration;
 import org.joda.time.LocalDateTime;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
+import java.util.Date;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import is.robertreynisson.iskcurrency.ISKCurrency;
+import is.robertreynisson.iskcurrency.R;
 
 /**
  * Created by robert on 10.2.2016.
@@ -20,8 +29,21 @@ public class Utils {
     }
 
     public static String PrettyDateFormatter(long date) {
+        Date d = new Date();
+        Duration duration = new Duration(d.getTime() - date); // in milliseconds
+        PeriodFormatter formatter = new PeriodFormatterBuilder()
+                .appendDays()
+                .appendSuffix("d")
+                .appendHours()
+                .appendSuffix("h")
+                .appendMinutes()
+                .appendSuffix("m")
+                //.appendSeconds()
+                //.appendSuffix("s")
+                .toFormatter();
+        return formatter.print(duration.toPeriod());
         // Do additional formatting here (e.g. prettytime etc.)
-        return NiceDate(new LocalDateTime(date));
+        //return NiceDate(new LocalDateTime(date));
     }
 
     private static String NiceDate(LocalDateTime localDateTime) {
@@ -92,6 +114,7 @@ public class Utils {
 
     public static Locale getLocaleFromCurrency(String currencyAbbrevaton) {
         Locale locale = Locale.getDefault();
+        if(currencyAbbrevaton == null) return locale;
         switch (currencyAbbrevaton) {
             case "ISK":
                 locale = new Locale("is", "IS");
@@ -137,6 +160,34 @@ public class Utils {
                 break;
         }
         return locale;
+    }
+
+    public static Drawable getDrawableFromCurrency(String currencyAbbrevaton) {
+
+        if(currencyAbbrevaton == null) return null;
+        switch (currencyAbbrevaton) {
+            case "ISK":
+                return ContextCompat.getDrawable(ISKCurrency.getInstance(), R.drawable.ic_isk);
+            case "USD":
+                return ContextCompat.getDrawable(ISKCurrency.getInstance(), R.drawable.ic_usd);
+            case "EUR":
+                return ContextCompat.getDrawable(ISKCurrency.getInstance(), R.drawable.ic_eur);
+            case "GBP":
+                return ContextCompat.getDrawable(ISKCurrency.getInstance(), R.drawable.ic_gbp);
+            case "JPY":
+                return ContextCompat.getDrawable(ISKCurrency.getInstance(), R.drawable.ic_jpy);
+            case "NOK":
+                return ContextCompat.getDrawable(ISKCurrency.getInstance(), R.drawable.ic_nok);
+            case "SEK":
+                return ContextCompat.getDrawable(ISKCurrency.getInstance(), R.drawable.ic_sek);
+            case "DKK":
+                return ContextCompat.getDrawable(ISKCurrency.getInstance(), R.drawable.ic_dkk);
+            case "CAD":
+                return ContextCompat.getDrawable(ISKCurrency.getInstance(), R.drawable.ic_cad);
+            case "CHF":
+                return ContextCompat.getDrawable(ISKCurrency.getInstance(), R.drawable.ic_chf);
+        }
+        return null;
     }
 
     public static double doubleFromFormattedCurrency(String currency, String amount) throws NumberFormatException {

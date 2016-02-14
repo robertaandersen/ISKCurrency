@@ -1,6 +1,12 @@
 package is.robertreynisson.iskcurrency.data_layer;
 
-import is.robertreynisson.iskcurrency.data_layer.models.CurrencyResponse;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import is.robertreynisson.iskcurrency.data_layer.models.APISCurrencyResponse;
+import is.robertreynisson.iskcurrency.data_layer.models.ArionCurrencyResponse;
 import retrofit.RestAdapter;
 import rx.Observable;
 
@@ -22,6 +28,20 @@ public class ServiceAdapter {
         bankAPI = adapter.create(BankAPI.class);
     }
 
-    public Observable<CurrencyResponse> getRates(String bank){ return bankAPI.getRates(bank);}
+    public Observable<APISCurrencyResponse> getAPISRates(String bank){ return bankAPI.getAPISRates(bank);}
+    //?m=GetCurrencies
+    // &beginDate=equals
+    // &finalDate=2016-02-14
+    // &currencyType=KortaGengi
+    // &currenciesAvailable=ISK,USD,GBP,EUR,CAD,DKK,NOK,SEK,CHF,JPY")
+    public Observable<ArionCurrencyResponse[]> getArionRates(){
+        Date d = new Date();
+ //       "2016-02-14"
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String currAvailable = "ISK,USD,GBP,EUR,CAD,DKK,NOK,SEK,CHF,JPY";
+        return bankAPI.getArionRates("GetCurrencies", sdf.format(d.getTime()), sdf.format(d.getTime()), "KortaGengi", currAvailable);
+    }
+
+
 
 }

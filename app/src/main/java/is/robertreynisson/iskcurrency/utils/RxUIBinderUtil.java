@@ -2,6 +2,7 @@ package is.robertreynisson.iskcurrency.utils;
 
 import android.util.Log;
 
+import is.robertreynisson.iskcurrency.presenter_layer.MainActivity;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -56,9 +57,13 @@ public class RxUIBinderUtil {
         @Override
         public void onError(Throwable e) {
             Log.e(TAG, tag + "." + "onError", e);
+            MainActivity.showError(e.getMessage());
         }
 
         @Override
-        public void onNext(U u) {  setter.call(u); }
+        public void onNext(U u) {
+            MainActivity.showError(null);
+            setter.call(u);
+        }
     }
 }

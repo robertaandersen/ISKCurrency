@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import java.util.Date;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import is.robertreynisson.iskcurrency.ISKCurrency;
 import is.robertreynisson.iskcurrency.R;
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static CurrencyFragment currencyFragment;
 
     static TextView time;
-    public static TextView noNetwork;
+    public static TextView errorMSG;
     public static LinearLayout fragmentContainer;
 
 
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         time = (TextView) toolbar.findViewById(R.id.toolbar_time);
-        noNetwork = (TextView) findViewById(R.id.no_network);
+        errorMSG = (TextView) findViewById(R.id.main_errorMSG);
         fragmentContainer = (LinearLayout) findViewById(R.id.container);
 //        setSupportActionBar(toolbar);
 //        if(getSupportActionBar() != null) getSupportActionBar().setTitle("ISK Currency converter");
@@ -74,14 +73,19 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static void setTime(){
+    public static void setTime() {
         Date d = new Date();
+        setTime(Utils.PrettyDateFormatter(d.getTime()));
+    }
+
+    public static void setTime(String s) {
+        if (s == null || s.equals("")) return;
         String lastUpdate = ISKCurrency.getInstance().getResources().getString(R.string.update_msg);
-        time.setText(lastUpdate+" "+Utils.PrettyDateFormatter(d.getTime()));
+        time.setText(lastUpdate + " " + s + " ago");
     }
 
     private static void loadFragment() {
-        if(currencyFragment == null) reloadFragment();
+        if (currencyFragment == null) reloadFragment();
         mainActivity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, currencyFragment, currencyFragment.getTag())
@@ -90,14 +94,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void reloadFragment() {
-        if(currencyFragment == null) loadFragment();
+        if (currencyFragment == null) loadFragment();
         else {
             currencyFragment.reloadFragment();
         }
     }
 
     public static boolean isOnline() {
-        noNetwork.setVisibility(View.GONE);
+        errorMSG.setVisibility(View.GONE);
         fragmentContainer.setVisibility(View.VISIBLE);
         ConnectivityManager cm = (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -105,7 +109,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void setOffLine() {
-        noNetwork.setVisibility(View.VISIBLE);
+        errorMSG.setVisibility(View.VISIBLE);
         fragmentContainer.setVisibility(View.GONE);
+    }
+
+    public static void showError(String message) {
+        if (message != null) {
+            errorMSG.setText(message);
+            setOffLine();
+            return;
+        }
+        errorMSG.setVisibility(View.GONE);
     }
 }

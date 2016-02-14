@@ -25,6 +25,6 @@ public class ISKCurrency extends Application {
         JodaTimeAndroid.init(this);
     }
 
-    public static String getServerInfo() { return "http://apis.is";}
+    public static String getServerInfo() { return "http://arionbanki.is";}
 
 }
