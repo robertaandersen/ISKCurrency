@@ -33,15 +33,17 @@ public class CurrencyViewModel extends AbstractViewModel {
         Utils.logger(TAG, "Subscribed");
         compositeSubscription.add(MainActivity.serviceAdapter.getArionRates()
                 .map(ModelConverters::currencyModelFromArionResponse)
+                .observeOn(AndroidSchedulers.mainThread())
                 .map(x -> {
                     Date d = new Date();
                     updateTime = d.getTime();
-                    return x;})
-                .observeOn(AndroidSchedulers.mainThread())
+                    MainActivity.setTime(Utils.PrettyDateFormatter(updateTime));
+                    return x;
+                })
                 .subscribe(currencyList));
         //compositeSubscription.add(MainActivity.serviceAdapter.getAPISRates("m5").map(ModelConverters::currencyModelFromAPI).subscribe(currencyList));
         //compositeSubscription.add(getDummyCurrencies().subscribeOn(AndroidSchedulers.mainThread()).subscribe(currencyList));
-        compositeSubscription.add(Observable.interval(1, TimeUnit.MINUTES).map(s -> Utils.PrettyDateFormatter(updateTime)).subscribe(time));
+        compositeSubscription.add(Observable.interval(1, TimeUnit.MINUTES, AndroidSchedulers.mainThread()).map(s -> Utils.PrettyDateFormatter(updateTime)).subscribe(time));
         compositeSubscription.add(
                 foreignCurrencyBus.toObserverable()
                         .throttleLast(250, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
