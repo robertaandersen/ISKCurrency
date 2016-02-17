@@ -2,8 +2,13 @@ package is.robertreynisson.iskcurrency;
 
 import android.app.Application;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
+import com.crashlytics.android.Crashlytics;
+
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import io.fabric.sdk.android.Fabric;
 import is.robertreynisson.iskcurrency.utils.Utils;
 
 /**
@@ -20,6 +25,7 @@ public class ISKCurrency extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         Utils.logger(TAG, "onCreate");
         instance = this;
         JodaTimeAndroid.init(this);

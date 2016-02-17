@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 23
@@ -11,6 +12,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        archivesBaseName = "ISKConverter-$versionName"
     }
     buildTypes {
         release {
@@ -50,4 +52,7 @@ dependencies {
     compile 'javax.annotation:javax.annotation-api:1.2'
     compile 'net.danlew:android.joda:2.9.2'
     compile 'com.jakewharton:butterknife:7.0.1'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+        transitive = true;
+    }
 }
