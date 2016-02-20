@@ -3,8 +3,6 @@ package is.robertreynisson.iskcurrency;
 import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
-import io.fabric.sdk.android.Fabric;
-import com.crashlytics.android.Crashlytics;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -21,6 +19,9 @@ public class ISKCurrency extends Application {
     private static ISKCurrency instance;
     public static ISKCurrency getInstance() { return instance; }
 
+    public static void setUrl(String url) {ISKCurrency.url = url;}
+    private static String url = "http://apis.is";
+
 
     @Override
     public void onCreate() {
@@ -31,6 +32,7 @@ public class ISKCurrency extends Application {
         JodaTimeAndroid.init(this);
     }
 
-    public static String getServerInfo() { return "http://arionbanki.is";}
+    public static String getServerInfo() { return url;}
+
 
 }

@@ -14,6 +14,7 @@ import is.robertreynisson.iskcurrency.R;
 import is.robertreynisson.iskcurrency.databinding.CurrencyItemBinding;
 import is.robertreynisson.iskcurrency.domain_layer.CurrencyViewModel;
 import is.robertreynisson.iskcurrency.presenter_layer.models.Currency;
+import is.robertreynisson.iskcurrency.utils.Utils;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -59,6 +60,10 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
             this.input = (EditText) currencyItemBinding.getRoot().findViewById(R.id.currency_item_edit_text);
             this.input.setOnFocusChangeListener((v, hasFocus) -> {
                 if (this.input.hasFocus()) this.input.setText("");
+                else{
+                    double d = this.currency.baseCurrencyAmount / this.currency.currencyValue;
+                    this.input.setText(Utils.CurrencyFormat(d, this.currency.currencyAbbrevaton, false));
+                }
             });
 
             this.input.addTextChangedListener(
@@ -77,14 +82,12 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
                         public void afterTextChanged(Editable s) {
                             if (input == null || !input.hasFocus() || input.getText().toString().equals("")) return;
                             try {
-                                input.setError(null);
                                 double val = Double.parseDouble(input.getText().toString()) * currency.currencyValue;
                                 CurrencyViewModel.broadcastNewValue(String.valueOf(val));
 
                             } catch (NumberFormatException ex) {
-                                input.setError(ex.getMessage());
-                            }
 
+                            }
                         }
                     }
             );
@@ -101,7 +104,6 @@ public class CurrencyRecyclerAdapter extends RecyclerView.Adapter<CurrencyRecycl
         private void updateItem(String newAmount) {
             if (input == null || input.hasFocus() || this.currency == null) return;
             try {
-                input.setError(null);
                 this.currency.baseCurrencyAmount = Double.parseDouble(newAmount);
                 this.currencyItemBinding.setCurrency(currency);
             } catch (NumberFormatException ex) {

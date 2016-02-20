@@ -16,6 +16,7 @@ import is.robertreynisson.iskcurrency.ISKCurrency;
 import is.robertreynisson.iskcurrency.R;
 import is.robertreynisson.iskcurrency.domain_layer.CurrencyViewModel;
 import is.robertreynisson.iskcurrency.presenter_layer.MainActivity;
+import is.robertreynisson.iskcurrency.presenter_layer.MainToolbar;
 import is.robertreynisson.iskcurrency.presenter_layer.models.Currency;
 import is.robertreynisson.iskcurrency.utils.RxUIBinderUtil;
 
@@ -54,7 +55,7 @@ public class CurrencyView extends FrameLayout {
         progressBar.setVisibility(VISIBLE);
         swipeRefreshLayout.setVisibility(GONE);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            currencyRecyclerAdpater.compositeSubscription.clear();
+            CurrencyRecyclerAdapter.compositeSubscription.clear();
             currencyRecyclerAdpater = null;
             MainActivity.reloadFragment();
         });
@@ -71,7 +72,7 @@ public class CurrencyView extends FrameLayout {
         rxUIBinderUtil.clear();
         if (this.viewModel != null) {
             rxUIBinderUtil.bindProperty(this.viewModel.getCurrencies(), this::updateUI);
-            rxUIBinderUtil.bindProperty(this.viewModel.getTime(), MainActivity::setTime);
+            rxUIBinderUtil.bindProperty(this.viewModel.getTime(), MainToolbar::setTime);
         }
     }
 

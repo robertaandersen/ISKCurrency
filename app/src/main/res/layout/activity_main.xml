@@ -3,27 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     tools:context=".presenter_layer.MainActivity">
 
-    <LinearLayout
+
+    <include layout="@layout/toolbar_container" />
+
+    <TextView
+        android:id="@+id/main_errorMSG"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:text="@string/error_no_network"
+        android:visibility="gone" />
 
-        <include layout="@layout/toolbar_container"/>
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="is.reynd.appbartest.MainActivity"
+        tools:showIn="@layout/activity_main" />
 
-        <TextView
-            android:id="@+id/main_errorMSG"
-            android:text="@string/error_no_network"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <LinearLayout
-            android:id="@+id/container"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical"/>
-    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

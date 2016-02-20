@@ -1,17 +1,19 @@
 package is.robertreynisson.iskcurrency.domain_layer;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import is.robertreynisson.iskcurrency.ISKCurrency;
 import is.robertreynisson.iskcurrency.presenter_layer.MainActivity;
+import is.robertreynisson.iskcurrency.presenter_layer.MainToolbar;
 import is.robertreynisson.iskcurrency.presenter_layer.models.Currency;
 import is.robertreynisson.iskcurrency.utils.RxBus;
 import is.robertreynisson.iskcurrency.utils.Utils;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 import rx.subscriptions.CompositeSubscription;
 
@@ -31,19 +33,35 @@ public class CurrencyViewModel extends AbstractViewModel {
     @Override
     protected void subscribeToDataStoreInternal(CompositeSubscription compositeSubscription) {
         Utils.logger(TAG, "Subscribed");
-        compositeSubscription.add(MainActivity.serviceAdapter.getArionRates()
-                .map(ModelConverters::currencyModelFromArionResponse)
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(x -> {
-                    Date d = new Date();
-                    updateTime = d.getTime();
-                    MainActivity.setTime(Utils.PrettyDateFormatter(updateTime));
-                    return x;
-                })
-                .subscribe(currencyList));
-        //compositeSubscription.add(MainActivity.serviceAdapter.getAPISRates("m5").map(ModelConverters::currencyModelFromAPI).subscribe(currencyList));
-        //compositeSubscription.add(getDummyCurrencies().subscribeOn(AndroidSchedulers.mainThread()).subscribe(currencyList));
+        if(ISKCurrency.getServerInfo().equals("http://arionbanki.is")) {
+            compositeSubscription.add(MainActivity.serviceAdapter.getArionRates()
+                    .map(ModelConverters::currencyModelFromArionResponse)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map(x -> {
+                        Date d = new Date();
+                        updateTime = d.getTime();
+                        MainToolbar.setTime(Utils.PrettyDateFormatter(updateTime));
+                        return x;
+                    })
+                    .subscribe(currencyList));
+        }
+        else {
+            compositeSubscription.add(
+                    MainActivity.serviceAdapter.getAPISRates(MainActivity.getBank())
+                            .map(ModelConverters::currencyModelFromAPI)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .map(x -> {
+                                Date d = new Date();
+                                updateTime = d.getTime();
+                                MainToolbar.setTime(Utils.PrettyDateFormatter(updateTime));
+                                return x;
+                            })
+                            .subscribe(currencyList));
+        }
+
         compositeSubscription.add(Observable.interval(1, TimeUnit.MINUTES, AndroidSchedulers.mainThread()).map(s -> Utils.PrettyDateFormatter(updateTime)).subscribe(time));
+
         compositeSubscription.add(
                 foreignCurrencyBus.toObserverable()
                         .throttleLast(250, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
@@ -58,27 +76,7 @@ public class CurrencyViewModel extends AbstractViewModel {
         updateTime = date.getTime();
         return currencyList;
     }
-    public Observable<List<Currency>> getDummyCurrencies() {
-        List<Currency> currlist = new ArrayList();
-        Currency usd = new Currency();
-        usd.currencyValue = 136.6;
-        usd.currencyAbbrevaton = "USD";
-        usd.currencyName ="Bandaríkjadalur";
-        currlist.add(usd);
 
-        Currency eur = new Currency();
-        eur.currencyValue = 142.2;
-        eur.currencyAbbrevaton = "EUR";
-        eur.currencyName ="Evra";
-        currlist.add(eur);
-
-        Currency dkk = new Currency();
-        dkk.currencyValue = 21.5;
-        dkk.currencyAbbrevaton = "DKK";
-        currlist.add(dkk);
-        return Observable.just(currlist);
-
-    }
     public static BehaviorSubject<Object> getNewBaseAmount() { return newBaseAmount;}
 
     private static String purge(String xxx){

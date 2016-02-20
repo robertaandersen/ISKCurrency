@@ -46,10 +46,10 @@ public class APISCurrencyResponse {
         private Double value;
         @SerializedName("askValue")
         @Expose
-        private Integer askValue;
+        private Double askValue;
         @SerializedName("bidValue")
         @Expose
-        private Integer bidValue;
+        private Double bidValue;
         @SerializedName("changeCur")
         @Expose
         private Double changeCur;
@@ -102,28 +102,28 @@ public class APISCurrencyResponse {
         /**
          * @return The askValue
          */
-        public Integer getAskValue() {
+        public Double getAskValue() {
             return askValue;
         }
 
         /**
          * @param askValue The askValue
          */
-        public void setAskValue(Integer askValue) {
+        public void setAskValue(Double askValue) {
             this.askValue = askValue;
         }
 
         /**
          * @return The bidValue
          */
-        public Integer getBidValue() {
+        public Double getBidValue() {
             return bidValue;
         }
 
         /**
          * @param bidValue The bidValue
          */
-        public void setBidValue(Integer bidValue) {
+        public void setBidValue(Double bidValue) {
             this.bidValue = bidValue;
         }
 

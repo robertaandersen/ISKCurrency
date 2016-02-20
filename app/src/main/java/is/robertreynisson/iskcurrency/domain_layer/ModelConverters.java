@@ -14,15 +14,30 @@ import rx.Observable;
  */
 public class ModelConverters {
     public static List<Currency> currencyModelFromAPI(APISCurrencyResponse APISCurrencyResponse) {
-        List<Currency> l = new ArrayList<>();
+        List<Currency> l = appendISK(APISCurrencyResponse);
         Observable.from(APISCurrencyResponse.getResults()).map(currency -> {
             Currency c = new Currency();
             c.currencyValue = currency.getValue();
             c.currencyName = currency.getLongName();
             c.currencyAbbrevaton = currency.getShortName();
+            c.currencyIcon = Utils.getDrawableFromCurrency(currency.getShortName());
             l.add(c);
             return c;
         }).subscribe();
+        return l;
+    }
+
+    private static List<Currency> appendISK(APISCurrencyResponse apisCurrencyResponse) {
+        List<Currency> l = new ArrayList<>();
+        for(int i = 0; i < apisCurrencyResponse.getResults().size(); i++){
+            if(apisCurrencyResponse.getResults().get(i).getShortName().equals("ISK")) return l;
+        }
+        Currency isk = new Currency();
+        isk.currencyIcon = Utils.getDrawableFromCurrency("ISK");
+        isk.currencyValue = 1;
+        isk.currencyName = "Króna";
+        isk.currencyAbbrevaton = "ISK";
+        l.add(isk);
         return l;
     }
 

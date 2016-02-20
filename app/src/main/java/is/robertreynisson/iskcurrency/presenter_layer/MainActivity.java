@@ -7,19 +7,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.Date;
-
-import butterknife.ButterKnife;
 import is.robertreynisson.iskcurrency.ISKCurrency;
 import is.robertreynisson.iskcurrency.R;
 import is.robertreynisson.iskcurrency.data_layer.ServiceAdapter;
 import is.robertreynisson.iskcurrency.presenter_layer.Currency.CurrencyFragment;
-import is.robertreynisson.iskcurrency.utils.Utils;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -29,27 +24,28 @@ public class MainActivity extends AppCompatActivity {
 
     private static CurrencyFragment currencyFragment;
 
-    static TextView time;
     public static TextView errorMSG;
-    public static LinearLayout fragmentContainer;
+    public static RelativeLayout fragmentContainer;
+    public static String selectedBank = "m5";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
         serviceAdapter = new ServiceAdapter(ISKCurrency.getServerInfo());
         mainActivity = this;
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        time = (TextView) toolbar.findViewById(R.id.toolbar_time);
+        MainToolbar.toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(MainToolbar.toolbar);
+        if (getSupportActionBar() != null) getSupportActionBar().setTitle("");
+        MainToolbar.setupServiceSelector();
+
         errorMSG = (TextView) findViewById(R.id.main_errorMSG);
-        fragmentContainer = (LinearLayout) findViewById(R.id.container);
-//        setSupportActionBar(toolbar);
-//        if(getSupportActionBar() != null) getSupportActionBar().setTitle("ISK Currency converter");
+        fragmentContainer = (RelativeLayout) findViewById(R.id.container);
         currencyFragment = new CurrencyFragment();
         loadFragment();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -58,34 +54,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    public static void setTime() {
-        Date d = new Date();
-        setTime(Utils.PrettyDateFormatter(d.getTime()));
-    }
-
-    public static void setTime(String s) {
-        if (s == null || s.equals("")) return;
-        String lastUpdate = ISKCurrency.getInstance().getResources().getString(R.string.update_msg);
-        time.setText(lastUpdate + " " + s + " ago");
-    }
 
     private static void loadFragment() {
-        if (currencyFragment == null) reloadFragment();
+        if (currencyFragment == null) currencyFragment = new CurrencyFragment();
         mainActivity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, currencyFragment, currencyFragment.getTag())
@@ -120,5 +91,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         errorMSG.setVisibility(View.GONE);
+    }
+
+    public static String getBank() {
+        return selectedBank;
     }
 }
