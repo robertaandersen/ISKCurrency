@@ -59,6 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="@{currency.getExchange}"
+            android:inputType="number"
             tools:text="1000" />
     </LinearLayout>
 </layout>
