@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.container, currencyFragment, currencyFragment.getTag())
                 .commit();
-
     }
 
     public static void reloadFragment() {
